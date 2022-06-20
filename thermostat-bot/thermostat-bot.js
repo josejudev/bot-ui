@@ -1,4 +1,5 @@
 //Social floating button
+console.log(2)
 $('.main-btn').on('click', function () {
   $('.float-btn ul').toggleClass('toggled');
 });
