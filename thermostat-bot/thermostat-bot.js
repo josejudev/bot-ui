@@ -3,8 +3,9 @@ console.log(2)
 $('.main-btn').on('click', function () {
   $('.float-btn ul').toggleClass('toggled');
 });
+
 var botui = new BotUI('thermostat-bot'),
-  temperature = 30;
+
 text = ''
 
 init_welcome()
@@ -14,7 +15,7 @@ function init_welcome() {
     .bot({
       //loading: true,
       delay: 500,
-      content: 'Hola, soy Wendy <h1>🤖</h1>, tu asistente virtual oficial de la universidad.'
+      content: 'Hola, soy Wendy 🤖, tu asistente virtual oficial de la universidad.'
     })
 }
 
@@ -24,9 +25,9 @@ function init() {
     .bot({
       //loading: true,
       delay: 500,
-      content: 'Te puedo ayudar en algo?'
+      content: '¿Te puedo ayudar en algo?'
     })
-    .then(bot_options).then(function (res) {
+    .then(botOptions).then(function (res) {
 
       if (res.value == 'change') {
         changeTemp();
@@ -43,38 +44,10 @@ function init() {
       } else {
         botui.message.bot({
           delay: 500,
-          content: 'Current temperature is: ' + temperature + ' degree'
+          content: 'Error'
         }).then(init);
       }
     });
-}
-
-var changeTemp = function () {
-  botui.message
-    .bot({
-      delay: 500,
-      content: 'Change the temperature to ...'
-    })
-    .then(function () {
-      return botui.action.text({
-        delay: 500,
-        action: {
-          size: 10,
-          icon: 'thermometer-empty',
-          value: temperature, // show the current temperature as default
-          sub_type: 'number',
-          placeholder: '26'
-        }
-      })
-    }).then(function (res) {
-      temperature = res.value; // save new value
-      return botui.message
-        .bot({
-          delay: 1500,
-          //loading: true, // pretend like we are doing something
-          content: 'temperature set to ' + res.value
-        });
-    }).then(init); // loop to initial state
 }
 
 const changeInput = function () {
@@ -91,23 +64,44 @@ const changeInput = function () {
           icon: 'keyboard-o',
           value: text, // show the current temperature as default
           sub_type: 'text',
-          placeholder: 'type'
+          placeholder: 'Escribe algo...'
         }
       })
-    }).then(function (res) {
-      if (res.value == 'Hola') {
+    }
+    ).then(function (res) {
+
+      if (res.value.includes('estadia')) {
         return botui.message
           .bot({
             delay: 1500,
             //loading: true, // pretend like we are doing something
-            content: 'Showing info about ' + res.value
-          });
+            content: 'Mostrando todos los resultados con la busqueda ' + res.value
+            
+          }
+          ).then(
+            function () {
+              return botui.action.button({
+                delay: 500,
+                action: [{
+                    text: 'Recargar bot',
+                    icon: 'refresh',
+                    value: 'yes'
+                  }
+                ]
+              })
+            }
+          ).then(function (res) {
+            if (res.value == 'yes') {
+              init();
+            }
+          }
+          );
       } else {
         return botui.message
           .bot({
             delay: 1500,
             //loading: true, // pretend like we are doing something
-            content: 'Incorrect input'
+            content: '!(external-link) Error sintaxis'
           }).then(changeInput);
 
       } /// save new value
@@ -115,21 +109,21 @@ const changeInput = function () {
     }) // loop to initial state
 }
 
-const bot_options = () => {
+const botOptions = () => {
   return botui.action.button({
     delay: 500,
     action: [{
         text: 'Si, necesito ayuda',
         icon: 'thumbs-o-up',
         value: 'yes'
-      }, {
-        text: 'No, solo estoy navegando',
-        value: 'no'
       },
       {
         text: 'Buscar informacion',
         icon: 'search',
         value: 'input'
+      }, {
+        text: 'No, solo estoy navegando',
+        value: 'no'
       }
       
     ]
@@ -152,7 +146,23 @@ const yes_value = () => {
             value: 'study'
           },
           {
-            text: 'Input',
+            text:'Estancias y Estadías',
+            icon: 'file-text-o',
+            value: 'estadias'
+          },
+          {
+            text:'Proceso de reinscripción',
+            icon: 'file-o',
+            value: 'reinscription'
+          },{
+            text:'Contactanos',
+            icon: 'envelope-o',
+            value: 'contact'
+
+          },
+          {
+            text: 'Buscar informacion ',
+            icon: 'search',
             value: 'input'
           },
         ]
@@ -164,30 +174,15 @@ const yes_value = () => {
     if (res.value == 'study') {
       botui.message.bot({
         delay: 500,
-        content: 'showing info about study'
+        content: 'Conoce nuestras ingenierias!'
       }).then(function () {
         return botui.message.bot({
+          cssClass: 'botui-link',
           delay: 500,
+          content: '🌐 [Ing. de Software](https://example.com)^ <br>' +'🌐 [Ing. en Energia](https://example.com)^ <br>'
+        })
+      }).then(function () {
 
-          content: 'degrees'
-        })
-      }).then(function () {
-        return botui.message.bot({
-          delay: 500,
-          content: '🔗<a href="https://google.com">Option 1</a><br>🔗<a href="https://google.com">Option 2</a> '
-        })
-      }).then(function () {
-        botui.action.text({
-          addMessage: false,
-          action: {
-            placeholder: 'Your name'
-          }
-        }).then(function (res) { // will be called when a button is clicked.
-          botui.message.add({
-            human: true, // show it as right aligned to UI
-            content: 'My name is ' + res.value
-          });
-        });
       })
 
     }
@@ -198,11 +193,11 @@ const no_value = () => {
   botui.message.bot({
     //loading: true,
     delay: 500,
-    content: 'En otro momento sera :('
+    content: '!(frown-o) En otro momento sera :('
   }).then(
     function () {
       return botui.action.button({
-        delay: 500,
+        delay: 20000,
         action: [{
             text: 'Recargar bot',
             icon: 'refresh',
