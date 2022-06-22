@@ -1,10 +1,6 @@
-//Social floating button
-console.log(2)
-$('.main-btn').on('click', function () {
-  $('.float-btn ul').toggleClass('toggled');
-});
 
-var botui = new BotUI('thermostat-bot'),
+
+var botui = new BotUI('bot-wendy'),
 
 text = ''
 
@@ -76,33 +72,17 @@ const changeInput = function () {
             delay: 1500,
             //loading: true, // pretend like we are doing something
             content: 'Mostrando todos los resultados con la busqueda ' + res.value
-            
           }
           ).then(
-            function () {
-              return botui.action.button({
-                delay: 500,
-                action: [{
-                    text: 'Recargar bot',
-                    icon: 'refresh',
-                    value: 'yes'
-                  }
-                ]
-              })
-            }
-          ).then(function (res) {
-            if (res.value == 'yes') {
-              init();
-            }
-          }
-          );
+            reloadBot()
+          )
       } else {
         return botui.message
           .bot({
-            delay: 1500,
+            delay: 500,
             //loading: true, // pretend like we are doing something
             content: '!(external-link) Error sintaxis'
-          }).then(changeInput);
+          }).then(changeInput())
 
       } /// save new value
 
@@ -170,48 +150,67 @@ const yes_value = () => {
       }) 
     }
     
-  ).then(function (res) {
-    if (res.value == 'study') {
-      botui.message.bot({
-        delay: 500,
-        content: 'Conoce nuestras ingenierias!'
-      }).then(function () {
-        return botui.message.bot({
-          cssClass: 'botui-link',
-          delay: 500,
-          content: '🌐 [Ing. de Software](https://example.com)^ <br>' +'🌐 [Ing. en Energia](https://example.com)^ <br>'
-        })
-      }).then(function () {
-
-      })
-
-    }
-  })
+  ).then(studyOption)
 }
+
+const studyOption = (res) => {
+  if (res.value == 'study') {
+    botui.message.bot({
+      delay: 500,
+      content: 'Conoce nuestras ingenierias y postgrados! '
+    }).then(function () {
+      return botui.message.bot({
+        cssClass: 'botui-link',
+        delay: 500,
+        content: '🌐 [Ing. de Software](https://example.com)^ <br>' +'🌐 [Ing. en Energia](https://example.com)^ <br> <br>' + '🧑‍🎓 Postgrados <br>' + '🌐 [Maestria en: ](https://example.com)^'
+      })
+    }).then(reloadBot())
+
+  }
+  else if (res.value == 'estadias') {
+    botui.message.bot({
+      delay: 500,
+      content: 'Informacion de estadias y estancias'
+    }).then(function () {
+      return botui.message.bot({
+        cssClass: 'botui-link',
+        delay: 500,
+        content: '🌐 [Ing. de Software](https://example.com)^ <br>' +'🌐 [Ing. en Energia](https://example.com)^ <br> <br>' + '🧑‍🎓 Postgrados <br>' + '🌐 [Maestria en: ](https://example.com)^'
+      }).then(reloadBot())
+    }
+    )
+  }
+}
+
+
+
 
 const no_value = () => {
   botui.message.bot({
     //loading: true,
     delay: 500,
     content: '!(frown-o) En otro momento sera :('
-  }).then(
-    function () {
-      return botui.action.button({
-        delay: 20000,
+  }).then(reloadBot())
+}
+
+
+const reloadBot = () => {
+ botui.action.button({
+        delay: 1000,
         action: [{
             text: 'Recargar bot',
             icon: 'refresh',
             value: 'yes'
           }
         ]
-      })
-    }
-  ).then(function (res) {
-    if (res.value == 'yes') {
-      init();
-    }
-  })
-}
+      }).then(function (res) {
+        if (res.value == 'yes') {
+          init();
+    }})}
+    
+
+
+
 
 
 init();
