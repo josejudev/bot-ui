@@ -1,4 +1,7 @@
-
+const caseContact = ["contacto", "direccion", "correo", "telefono"];
+const caseReinscription = ["reinscripcion", "inscripcion", "inscripción" , "reinscripción"];
+const caseCareer = ["ingenieria", "postgrado","licenciatura","maestria"];
+const caseEstadia = ["estancia", "estadia", "estancia y estadia"];
 
 var botui = new BotUI('bot-wendy'),
 
@@ -6,10 +9,11 @@ text = ''
 
 init_welcome()
 
+//mensaje de bienvenida
 function init_welcome() {
   botui.message
     .bot({
-      //loading: true,
+      loading: true,
       delay: 500,
       content: 'Hola, soy Wendy 🤖, tu asistente virtual oficial de la universidad.'
     })
@@ -19,25 +23,27 @@ function init_welcome() {
 function init() {
   botui.message
     .bot({
-      //loading: true,
-      delay: 500,
+      loading: true,
+      delay: 800,
       content: '¿Te puedo ayudar en algo?'
     })
     .then(botOptions).then(function (res) {
 
-      if (res.value == 'change') {
-        changeTemp();
+      if (res.value == 'input') {
+        searchInfo();
 
-      } else if (res.value == 'input') {
-        changeInput();
-
-      } else if (res.value == 'no') {
-        no_value();
-
-      } else if (res.value == 'yes') {
-        yes_value();
-
-      } else {
+      }
+      else if (res.value == 'yes') {
+        yesValue();
+      }  
+      else if (res.value == 'no') {
+        botui.message.bot({
+          loading: true,
+          delay: 800,
+          content: ' En otro momento sera 🙂'
+        }).then(reloadBot())
+      }
+      else {
         botui.message.bot({
           delay: 500,
           content: 'Error'
@@ -46,13 +52,16 @@ function init() {
     });
 }
 
-const changeInput = function () {
+const searchInfo = function () {
+
   botui.message
     .bot({
-      delay: 500,
+      loading: true,
+      delay: 800,
       content: 'Escribe la informacion que quieres consultar'
     })
     .then(function () {
+      
       return botui.action.text({
         delay: 500,
         action: {
@@ -66,27 +75,30 @@ const changeInput = function () {
     }
     ).then(function (res) {
 
-      if (res.value.includes('estadia')) {
+      if (res.value.toLowerCase().test1 = caseEstadia.some(iterant => res.value.includes(iterant))) {
+        return estadiasEstancias();
+      }
+      else if (res.value.toLowerCase().test1 = caseContact.some(iterant => res.value.includes(iterant))) {
+        return contactUs()
+      }
+      else if (res.value.toLowerCase().test1 = caseReinscription.some(iterant => res.value.includes(iterant))) {
+        return reinscription()
+      }
+      else if (res.value.toLowerCase().test1 = caseCareer.some(iterant => res.value.includes(iterant))) {
+        return study();
+      }
+
+      else {
         return botui.message
           .bot({
-            delay: 1500,
-            //loading: true, // pretend like we are doing something
-            content: 'Mostrando todos los resultados con la busqueda ' + res.value
-          }
-          ).then(
-            reloadBot()
-          )
-      } else {
-        return botui.message
-          .bot({
-            delay: 500,
-            //loading: true, // pretend like we are doing something
-            content: '!(external-link) Error sintaxis'
-          }).then(changeInput())
+            delay: 800,
+            //loading: true,
+            content: '❌ Error sintaxis'
+          }).then(init)
 
-      } /// save new value
+      }
 
-    }) // loop to initial state
+    })
 }
 
 const botOptions = () => {
@@ -108,13 +120,12 @@ const botOptions = () => {
       
     ]
   })
-  
 }
 
-const yes_value = () => {
+const yesValue = () => {
   botui.message.bot({
-    //loading: true,
-    delay: 500,
+    loading: true,
+    delay: 800,
     content: 'Excelente, ¿En que te puedo ayudar?'
   }).then(
     function () {
@@ -131,7 +142,7 @@ const yes_value = () => {
             value: 'estadias'
           },
           {
-            text:'Proceso de reinscripción',
+            text:'Proceso de inscripción y reinscripción',
             icon: 'file-o',
             value: 'reinscription'
           },{
@@ -149,54 +160,108 @@ const yes_value = () => {
         
       }) 
     }
-    
-  ).then(studyOption)
+  ).then(helpTips)
 }
-
-const studyOption = (res) => {
+//Showing options to user to choose
+const helpTips = (res) => {
   if (res.value == 'study') {
-    botui.message.bot({
-      delay: 500,
-      content: 'Conoce nuestras ingenierias y postgrados! '
-    }).then(function () {
-      return botui.message.bot({
-        cssClass: 'botui-link',
-        delay: 500,
-        content: '🌐 [Ing. de Software](https://example.com)^ <br>' +'🌐 [Ing. en Energia](https://example.com)^ <br> <br>' + '🧑‍🎓 Postgrados <br>' + '🌐 [Maestria en: ](https://example.com)^'
-      })
-    }).then(reloadBot())
-
+    study();
   }
+
   else if (res.value == 'estadias') {
-    botui.message.bot({
-      delay: 500,
-      content: 'Informacion de estadias y estancias'
-    }).then(function () {
-      return botui.message.bot({
-        cssClass: 'botui-link',
-        delay: 500,
-        content: '🌐 [Ing. de Software](https://example.com)^ <br>' +'🌐 [Ing. en Energia](https://example.com)^ <br> <br>' + '🧑‍🎓 Postgrados <br>' + '🌐 [Maestria en: ](https://example.com)^'
-      }).then(reloadBot())
-    }
-    )
+    estadiasEstancias();
+  }
+
+  else if (res.value == 'reinscription') {
+    reinscription();
+  }
+ 
+  else if (res.value == 'contact') {  
+    contactUs()
+  }
+  
+  else if (res.value == 'input') {
+    searchInfo();
+
   }
 }
 
 
 
 
-const no_value = () => {
+
+
+//Info about the career
+const study = () => {
   botui.message.bot({
-    //loading: true,
-    delay: 500,
-    content: '!(frown-o) En otro momento sera :('
+    loading: true,
+    delay: 900,
+    content: 'Conoce nuestras ingenierias y postgrados! '
+  }).then(function () {
+    return botui.message.bot({
+      loading : true,
+      cssClass: 'botui-link',
+      delay: 1000,
+      content: '🌐 [Ing. de Software](https://example.com)^ <br>' +'🌐 [Ing. en Energia](https://example.com)^ <br> <br>' + '🧑‍🎓 Postgrados <br>' + '🌐 [Maestria en: ](https://example.com)^ <br>'+ '🌐 [Maestria en: ](https://example.com)^'
+    })
   }).then(reloadBot())
 }
 
+//info about the estadias and estancias
+const estadiasEstancias = () => {
+  botui.message.bot({
+    loading: true,
+    delay: 800,
+    content: 'Informacion de estadias y estancias'
+  }).then(function () {
+    return botui.message.bot({
+      loading : true,
+      cssClass: 'botui-link',
+      delay: 1000,
+      content: '🔗 [Documentacion y proceso de estancia](https://example.com)^ <br>' +'🔗 [Documentacion y proceso de estadia ](https://example.com)^ <br> <br>'
+    })
+  }
+  ).then(reloadBot())
+}
 
+//info about the reinscription
+const reinscription = () => {
+  botui.message.bot({
+    loading: true,
+    delay: 800,
+    content: 'Proceso de reinscripcion'
+  }).then(function () {
+    return botui.message.bot({
+      loading:true,
+      cssClass: 'botui-link',
+      delay: 1000,
+      content: '📝 Ingresa al link para ver mas información a cerca del [proceso de reinscripción](https://example.com)^ <br>'
+    })
+  }
+  ).then(reloadBot())
+}
+
+//info about contact
+const contactUs = () => {
+  botui.message.bot({
+    loading:true,
+    delay: 800,
+    content: 'Informacion de contacto'
+  }).then(function () {
+    return botui.message.bot({
+      cssClass: 'botui-link',
+      delay: 1000,
+      content: '☎️ Teléfono <br> 📧 Mail <br>📍 Dirección <br> 🕠 Horario<br> '
+    })
+  }
+  ).then(reloadBot())
+}
+
+
+//Reload bot function
 const reloadBot = () => {
  botui.action.button({
-        delay: 1000,
+        delay: 1800,
         action: [{
             text: 'Recargar bot',
             icon: 'refresh',
@@ -210,7 +275,6 @@ const reloadBot = () => {
     
 
 
-
-
-
 init();
+
+
