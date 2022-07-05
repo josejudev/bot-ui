@@ -1,7 +1,8 @@
 const caseContact = ["contacto", "direccion", "correo", "telefono"];
-const caseReinscription = ["reinscripcion", "inscripcion", "inscripción" , "reinscripción"];
+const caseReinscription = ["reinscripcion", "inscripcion", "inscripción" , "reinscripción","requisitos de estudiantes"];
 const caseCareer = ["ingenieria", "postgrado","licenciatura","maestria"];
 const caseEstadia = ["estancia", "estadia", "estancia y estadia"];
+
 
 var botui = new BotUI('bot-wendy'),
 
@@ -67,7 +68,7 @@ const searchInfo = function () {
         action: {
           size: 10,
           icon: 'keyboard-o',
-          value: text, // show the current temperature as default
+          value: text,
           sub_type: 'text',
           placeholder: 'Escribe algo...'
         }
@@ -91,10 +92,11 @@ const searchInfo = function () {
       else {
         return botui.message
           .bot({
+            loading: true,
             delay: 800,
             //loading: true,
-            content: '❌ Error sintaxis'
-          }).then(init)
+            content: '😐 No hemos encontrados resultados con tu busqueda'
+          }).then(searchReload)
 
       }
 
@@ -107,7 +109,7 @@ const botOptions = () => {
     action: [{
         text: 'Si, necesito ayuda',
         icon: 'thumbs-o-up',
-        value: 'yes'
+        value: 'yes',
       },
       {
         text: 'Buscar informacion',
@@ -184,12 +186,10 @@ const helpTips = (res) => {
     searchInfo();
 
   }
+  else if (res.value == 'noSearch') {
+    init();
+  }
 }
-
-
-
-
-
 
 //Info about the career
 const study = () => {
@@ -204,7 +204,7 @@ const study = () => {
       delay: 1000,
       content: '🌐 [Ing. de Software](https://example.com)^ <br>' +'🌐 [Ing. en Energia](https://example.com)^ <br> <br>' + '🧑‍🎓 Postgrados <br>' + '🌐 [Maestria en: ](https://example.com)^ <br>'+ '🌐 [Maestria en: ](https://example.com)^'
     })
-  }).then(reloadBot())
+  }).then(backOptions())
 }
 
 //info about the estadias and estancias
@@ -221,7 +221,7 @@ const estadiasEstancias = () => {
       content: '🔗 [Documentacion y proceso de estancia](https://example.com)^ <br>' +'🔗 [Documentacion y proceso de estadia ](https://example.com)^ <br> <br>'
     })
   }
-  ).then(reloadBot())
+  ).then(backOptions())
 }
 
 //info about the reinscription
@@ -238,7 +238,7 @@ const reinscription = () => {
       content: '📝 Ingresa al link para ver mas información a cerca del [proceso de reinscripción](https://example.com)^ <br>'
     })
   }
-  ).then(reloadBot())
+  ).then(backOptions())
 }
 
 //info about contact
@@ -254,7 +254,40 @@ const contactUs = () => {
       content: '☎️ Teléfono <br> 📧 Mail <br>📍 Dirección <br> 🕠 Horario<br> '
     })
   }
-  ).then(reloadBot())
+  ).then(backOptions())
+}
+
+const searchReload= () => {
+  return botui.message.bot({
+    loading: true,
+    delay: 800,
+    content: '¿Quieres intentar nuevamente?'
+  }).then(function () {
+    return botui.action.button({
+      delay: 500,
+      action: [{
+          text: 'Si',
+          icon: 'search',
+          value: 'input'
+        },
+        {
+          text: 'No',
+          icon: 'times',
+          value: 'no'
+        }
+      ]
+    })
+  }
+  ).then(helpTipsSearch)
+}
+
+const helpTipsSearch = (res) => {
+  if (res.value == 'input') {
+    searchInfo();
+  }
+  else if (res.value == 'no') {
+    init();
+  }
 }
 
 
@@ -271,6 +304,21 @@ const reloadBot = () => {
       }).then(function (res) {
         if (res.value == 'yes') {
           init();
+    }})}
+
+const backOptions = () => {
+  botui.action.button({
+    delay: 1200,
+    action: [{
+        text: 'Volver',
+        icon: 'arrow-left',
+        value: 'yes'
+      }
+    ]
+  }).then(function (res) {
+    if (res.value == 'yes') {
+      yesValue();
+    
     }})}
     
 
