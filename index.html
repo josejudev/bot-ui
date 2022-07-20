@@ -2,8 +2,9 @@
 <html>
   <head>
     <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BotUI</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <!-- Links Bot -->
     <link rel="stylesheet" href="src-bot/customStyles.css">
     <link rel="stylesheet" href="src-bot/style-buble-chat.css">
@@ -30,6 +31,9 @@
         <label class="button-float" for="toggle-float"></label>
         <nav class="nav-float">
           <ul>
+            <label for="customRange2" class="form-label">Example range</label>
+        <input type="range" class="form-range-txt" min="15" max="25" value="15" id="customRange2">
+
             <div class="form-check form-switch">
                 <input class="form-check-input key-dark" type="checkbox" role="switch" id="darkMode">
                 <label class="form-check-label key-dark" for="darkMode">Dark Mode</label>
@@ -65,6 +69,7 @@
 
     <!-- Block Body Example -->
 
+
     <!-- Endblok -->
 
 
@@ -87,6 +92,24 @@
       </div>
     <!-- Endblock bot -->
 
+
+
+      <div class="contenido-neto">
+          <h2>Change font size</h2>
+          <p>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Esse voluptates nulla, perspiciatis, obcaecati officia molestias doloremque corporis expedita molestiae facere, consectetur porro tenetur. Minima dolorem nisi tempora, sit pariatur ab.</p>
+
+      </div>
+  </div>
+
+  <script>
+      const range = document.querySelector('.form-range-txt');
+      const content = document.querySelector('p');
+      range.addEventListener('input', function(){
+          const rangevalue = range.value;
+          content.style.fontSize = rangevalue + 'px';
+          Animation.style.fontSize = rangevalue + 'px';
+      });
+  </script>
     <!-- links bot -->
     <script src="https://cdn.jsdelivr.net/vue/latest/vue.min.js"></script>
     <script src="https://unpkg.com/botui/build/botui.js"></script>
@@ -97,6 +120,7 @@
     <script src="src-accesibility/scripts/main_accesi.js"></script>
     <script src="src-accesibility/scripts/main_tallback.js"></script>
     <!-- End links -->
+
 
   </body>
 </html>
